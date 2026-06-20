@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRYSTALONE: Journey Of Y&N</title> 
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0c0c0e;
+            color: #e4e4e7;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 650px;
+            background: #121215;
+            border: 2px solid #3f3f46;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+            transition: all 0.5s ease;
+        }
+        .state-neutral {
+            border-color: #3f3f46;
+            box-shadow: 0 0 15px rgba(63, 63, 70, 0.1), 0 20px 40px rgba(0, 0, 0, 0.7);
+        }
+        .state-danger {
+            border-color: #ef4444;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.45), 0 20px 40px rgba(0, 0, 0, 0.7);
+            animation: pulseRed 2s infinite ease-in-out;
+        }
+        .state-success {
+            border-color: #22c55e;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.45), 0 20px 40px rgba(0, 0, 0, 0.7);
+        }
+        @keyframes pulseRed {
+            0%, 100% {box-shadow: 0 0 15px rgba(239, 68, 68, 0.2), 0 20px 40px rgba(0, 0, 0, 0.7);}
+            50% {box-shadow: 0 0 30px rgba(239, 68, 68, 0.6), 0 20px 40px rgba(0, 0, 0, 0.7); border-color: #f87171;}
+        }
+        .header {
+            border-bottom: 1px solid #27272a;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        h2 {
+            margin: 0 0 8px 0;
+            font-size: 1.4rem;
+            color: #fafafa;
+            letter-spacing: 1px;
+        }
+        #status-bar {
+            font-size: 0.9rem;
+            color: #a1a1aa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-box {
+            min-height: 180px;
+            line-height: 1.7;
+            margin-bottom: 32px;
+            font-size: 1.1rem;
+            color: #d4d4d8;
+            white-space: pre-line;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        strong {
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+        .btn-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        button {
+            background: #18181b;
+            color: #e4e4e7;
+            border: 1px solid #3f3f46;
+            padding: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            background: #27272a;
+            color: #71717a;
+            border-color: #ffffff;
+            transform: translateX(4px);
+        }
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(2px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+    </style>
+</head>
+<body>
+    <div id="game-box" class="game-container state-neutral">
+        <div class="header">
+            <h2>CRYSTALONE: Journey Of Y&N (SHORT EDITION)</h2>
+            <div id="status-bar">Loathing every piece...</div>
+        </div>
+        <div id="story-text" class="story-box"></div>
+        <div id="choice-buttons" class="btn-grid"></div>
+    </div>
+    <script>
+        const storyNodes = {
+            start: {
+
+                objective: "Thoughts of Two",
+                uiState: "neutral",
+                text: "Your parents are the worst creatures to ever live in your whole life, seeing your little sister suffer and you getting dragged by your parents just for defending her.\n\n<strong>You cant take it anymore, you shall host a plan an escape with your only sister,</strong> you know he wont join in.",
+                options: [
+                    {text: "Initiate the escape tonight...", nextId: "escapeNight"}
+                ]
+            },
+           escapeNight: {
+                objective: "Escape your 'home' and make choices wisely",
+                uiState: "neutral",
+                text: "The house is dead quiet, but the air is heavy. You look at Yoon. She’s clutching the heavy wood-chopping axe she sneaked inside, her eyes wide with reckless excitement to leave this very house.\n\nYour parents are asleep down the hall. If you make a wrong move, they will blame her for 'corrupting' you again. It’s time.",
+                options: [
+                    {text: "Command Yoon to smash the window with the axe right now", nextId:'caughtEarly'},
+                    {text: "Tell Yoon to wait while you check the hallway first", nextId:'checkHallway'},
+                ]
+            },
+            caughtEarly: {
+                objective: "GAME OVER",
+                uiState: "danger",
+                text: "CRASH! Yoon smashes the glass blindly without checking the surroundings. The noise is too loud. \n\nBefore you can even climb out, heavy footsteps rush down the hall. The door bursts open. Your father stands there, furious. He looks straight past you and glares at Yoon. 'Unholy daughter... look what you've brainwashed your brother into whats he's doing!' \n\nYour plan failed before it even started.",
+                options: [
+                    {text: "Try Again (Load Last Save)", nextId:'start'},
+                ]
+            },
+            checkHallway: {
+                objective: "Escape your so called home.",
+                uiState: "neutral",
+                text: "You peer out. The floorboards creak. A shadow moves downstairs—your older brother is getting water. \n\nHe looks up and catches your eye. He looks absolutely terrified for you, but he silently shakes his head and turns away, pretending he saw nothing. The coast is clear, but time is running out.",
+                options: [
+                    {text: "Hesitate and wait in the room for another 10 minutes", nextId:'caughtWaiting'},
+                    {text: "Give Yoon the signal to smash the window now", nextId:'smashWindow'},
+                ]
+            },
+            caughtWaiting:{
+                objective: "GAME OVER",
+                uiState: "danger",
+                text: "You hesitate, trying to calculate the perfect micro-second to leave. Your overthinking is your downfall. \n\nYour mother walks up the stairs to check the hallway linen closet and catches you standing by the open window with an axe. The alarm is raised instantly. Yoon is blamed entirely for the 'evil plot' and her treatment grows twice as worse. You failed to protect her.",
+                options: [
+                    {text: "Try Again (Load Last Save)", nextId:'start'},
+                ]
+            },
+            smashWindow: {
+                objective: "Venture into the woods.",
+                uiState: "neutral",
+                text: "With a swift, calculated nod from you, Yoon swings the axe, shattering the glass cleanly. \n\nBefore the shards even settle, you grab her collar and pull her through the frame, tumbling into the bushes below. Lights instantly flick on upstairs. Screams echo from the house, but you and Yoon vanish into the dark treeline. You survived the night.",
+                options: [
+                    {text: "Fast-forward through the long, grueling journey...", nextId:'arrivalAtCave'},
+                ]
+            },
+            arrivalAtCave: {
+                objective: "Follow Yoon and explore.",
+                uiState: "neutral",
+                text: "Days of running turn into weeks. You stand at the mouth of a massive, glowing cavern deep in the mountains. A shimmering neon sign at the entrance reads: 'DO NOT ENTER'.\n\nBefore you can even process it, Yoon gasps. 'Nawn bro! Look at that cave, im gonna take a check!' she yells, sprinting inside without waiting for your command.",
+                options: [
+                    {text: "Sprint after her into the cavern", nextId:'enterCave'},
+                ]
+            },
+            enterCave: {
+                objective: "Enter the cave, think twice while also being wise.",
+                uiState: "neutral",
+                text: "'Hey, oh god you little naught, wait for me!' You catch up to Yoon at the edge of a steep cliff inside the cave. Below you flows a terrifying, blinding river of bubbling, orange lava. \n\nA narrow, creaking metallic bridge stretches across the molten river to the other side. Yoon is already grinning, pointing at it. 'Even the bridge looks so sparkly?? I dont see a why not reason to cross the bridge!' she says. Your heart hammers against your ribs—one slip on that bridge, and she's gone forever.",
+                options: [
+                    {text: "Take a deep breath, order Yoon to stay back and try to find a way to climb down the rocky cliff side", nextId:'climbDownFall'},
+                    {text: "Dont take even a breath and command Yoon to cross the bridge carefully", nextId:'crossBridge'},
+                ]
+            },
+            climbDownFall: {
+                objective: "GAME OVER",
+                uiState: "danger",
+                text: "Even if you have took every single oksygen from entire universe, you are still terrified of the bridge collapsing over the lava, you order Yoon to help you find a path to climb down the rocky cliff side instead.\n\nIt’s a horrific mistake. The loose rocks crumble beneath your boots. You slide, and though Yoon tries to catch you with her reckless strength, the weight pulls you both down. You fall directly toward the bubbling orange abyss...\n\nYour overprotective fear caused the ultimate disaster.",
+                options: [
+                    {text: "Rewind Context (Try Again)", nextId:'arrivalAtCave'},
+                ]
+            },
+            crossBridge: {
+                objective: "Cross the Virtuallistic Abyss",
+                uiState: "neutral",
+                text: "You didnt even take a single breath nor swallowing your fear. you still bravely said: 'Stay close behind me, step where I step,' you command her. \n\nYou step onto the narrow metal bridge. The metal groans, and the bright orange glow of the lava reflects off Yoon’s axe. Your hands are shaking, but you guide her step-by-step across the chasm, bracing for an intense wave of heat that strangely... never quite hits you. \n\nFinally, your boots slam onto solid stone on the other side. You both made it across.",
+                options: [
+                    {text: "Keep moving deeper into the facility", nextId:'walkIntoVirtuallisism'},
+                ]
+            },
+            walkIntoVirtuallisism: {
+                objective: "Chapter 1 cleared, yay!",
+                uiState: "success",
+                text: "You look back at the terrifying river of lava, your chest heaving. You survived the house escape, and you survived the molten abyss. \n\nYou and Yoon stand at the threshold of a massive, silent underground cyber-facility. What lies ahead in this strange realm? \n\nTo be continued in Chapter 2...(or maybe not, lol)",
+                options: [
+                    {text: "Play from beginning?", nextId:'start'},
+                ]
+            },
+            /*: {
+                objective: "",
+                uiState: "",
+                text: "",
+                options: [
+                    {text: "", nextId:''},
+                ]
+            },*/
+        };
+        const gameBox = document.getElementById('game-box');
+        const storyTextElement = document.getElementById('story-text')
+        const choiceButtonElement = document.getElementById('choice-buttons');
+        const statusBarElement = document.getElementById('status-bar');
+        function showStoryNode(nodeId) {
+            const node = storyNodes[nodeId];
+            if (!node) return;
+            storyTextElement.innerHTML = node.text;
+            statusBarElement.innerHTML = `Objective: ${node.objective}`;
+
+            gameBox.className = "game-container";
+            if (node.uiState === "danger") {
+                gameBox.classList.add("state-danger");
+            } else if (node.uiState === "success") {
+                gameBox.classList.add("state-success");
+            } else {
+                gameBox.classList.add("state-neutral")
+            }
+            choiceButtonElement.innerHTML = '';
+            node.options.forEach(option => {
+                const button = document.createElement('button');
+                button.innerText = option.text;
+                button.addEventListener('click', () => showStoryNode(option.nextId));
+                choiceButtonElement.appendChild(button);
+            });
+        }
+    showStoryNode('start');
+    </script>
+</body>
+</html>
